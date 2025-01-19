@@ -143,6 +143,8 @@ def demosaick(net, M):
 
     # get the device of the network and apply it to the variables
     dev=next(net.parameters()).device
+    
+    print (dev)
 
     M = th.from_numpy(M).to(device=dev, dtype=th.float)
 
@@ -150,10 +152,7 @@ def demosaick(net, M):
 
     out, outG = net( M )
 
-    tot_time_ref = time.time()-start
-
-    out= out.cpu().detach().numpy()
-    outG= outG.cpu().detach().numpy()
+    
 
     # reimpose GRBG mosaick
     out[0,1,0::2,0::2] = M[0,1,0::2,0::2]
@@ -161,6 +160,10 @@ def demosaick(net, M):
     out[0,2,1::2,0::2] = M[0,2,1::2,0::2]
     out[0,1,1::2,1::2] = M[0,1,1::2,1::2]
     
+    out= out.cpu().detach().numpy()
+    outG= outG.cpu().detach().numpy()
+    
+    tot_time_ref = time.time()-start
     tot_time_ref *= 1000
     print("Time  {:.0f} ms".format(tot_time_ref))
 
@@ -193,6 +196,8 @@ def main(args):
 
     else:
         model_ref.cpu()
+
+    model_ref.to(device)
 
     model_ref.eval()
           
@@ -329,4 +334,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    start = time.time()
+
     main(args)
+
+    tot_time_ref = time.time()-start
+    tot_time_ref *= 1000
+    print("Time  {:.0f} ms".format(tot_time_ref))

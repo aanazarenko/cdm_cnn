@@ -151,15 +151,18 @@ class CDMCNN(nn.Module):
     def forward(self, x):
         ''' Forward operation of the network on input x.'''
 
+        # Ensure compatibility of index tensor with x
+        index_tensor = torch.tensor([0, 2, 1], device=x.device)
+    
         # REORDER RB,G
-        x = torch.index_select(x, 1, torch.tensor([0,2,1])) 
+        x = torch.index_select(x, 1, index_tensor) 
 
         outG1 = self.step1(x)
         out   = self.step2(outG1)
 
         # ORDER RB,G   to   RGB
-        out   = torch.index_select(out,   1, torch.tensor([0,2,1])) 
-        outG1 = torch.index_select(outG1, 1, torch.tensor([0,2,1])) 
+        out   = torch.index_select(out,   1, index_tensor) 
+        outG1 = torch.index_select(outG1, 1, index_tensor) 
 
         return(out, outG1)
 
