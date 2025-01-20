@@ -18,7 +18,7 @@ file_ext="${input_file##*.}"
 output_file="${file_dir}/${file_name}_cdmcnn.${file_ext}"
 
 # Run the Python script with the input and output file paths
-python3 cdmcnn.py --gpu --offset_x=0 --offset_y=0 --input "$input_file" --output "$output_file"
+python3 cdmcnn.py --offset_x=1 --offset_y=1 --input "$input_file" --output "$output_file"
 
 # Run exiftool with the input and output file paths
 exiftool -tagsfromfile "$input_file" -overwrite_original "$output_file"

@@ -194,10 +194,9 @@ def main(args):
             device = th.device("cuda") if th.cuda.is_available() else th.device("cpu")
             print(f"Using {device} for acceleration.")
 
+        model_ref.to(device)
     else:
         model_ref.cpu()
-
-    model_ref.to(device)
 
     model_ref.eval()
           
@@ -336,8 +335,13 @@ if __name__ == "__main__":
 
     start = time.time()
 
+    import gc
+    gc.collect()  
+
     main(args)
 
     tot_time_ref = time.time()-start
     tot_time_ref *= 1000
     print("Time  {:.0f} ms".format(tot_time_ref))
+
+    gc.collect() 
