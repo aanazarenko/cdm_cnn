@@ -164,11 +164,11 @@ def demosaick(net, M):
     
     print ('Before sync')
     
-    out= out.cpu().detach().numpy()
+    out= out.detach().to("cpu", non_blocking=True).numpy()
     
     print ('Finished sync1')
     
-    outG= outG.cpu().detach().numpy()
+    outG= outG.detach().to("cpu", non_blocking=True).numpy()
    
     print ('Finished sync2')
         
@@ -191,22 +191,19 @@ def demosaick_load_model(network_path=None):
 def main(args):
     # Load the network for the specific application
     model_ref = demosaick_load_model(args.net_path) 
+    
+    device = th.device("cpu")
 
     if args.gpu:
 
-        #model_ref.cuda()
-
         if th.backends.mps.is_available():
             device = th.device("mps")
-            print("Using MPS backend for acceleration.")
-        else:
-            device = th.device("cuda") if th.cuda.is_available() else th.device("cpu")
-            print(f"Using {device} for acceleration.")
+        elif th.cuda.is_available():
+            device = th.device("cuda")
 
-        model_ref.to(device)
-    else:
-        model_ref.cpu()
-
+    print(f"Using {device} backend for acceleration.")
+    
+    model_ref.to(device, non_blocking=True)
     model_ref.eval()
           
     # Pad image to avoid border effects 
@@ -265,10 +262,16 @@ def main(args):
     M = np.array(M)[:1,:,:,:]
     M_backup = M.copy()
 
+    with th.profiler.profile(
+        activities=[th.profiler.ProfilerActivity.CPU, th.profiler.ProfilerActivity.CUDA],
+        on_trace_ready=th.profiler.tensorboard_trace_handler('./log')
+    ) as prof:
 
-    with th.no_grad():
-        R, runtime = demosaick(model_ref, M)
-    
+        with th.no_grad():
+            R, runtime = demosaick(model_ref, M)
+        
+    print(prof.key_averages().table(sort_by="cuda_time_total"))    
+        
     R = R.squeeze().transpose(1, 2, 0)
     R = R.clip(0,1)
     M = M_backup.transpose((2,3,1,0)).squeeze()
