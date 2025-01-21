@@ -149,10 +149,12 @@ def demosaick(net, M):
     M = th.from_numpy(M).to(device=dev, dtype=th.float)
 
     start = time.time()
+    
+    print ('Start')
 
     out, outG = net( M )
 
-    
+    print ('Net finished')
 
     # reimpose GRBG mosaick
     out[0,1,0::2,0::2] = M[0,1,0::2,0::2]
@@ -160,9 +162,16 @@ def demosaick(net, M):
     out[0,2,1::2,0::2] = M[0,2,1::2,0::2]
     out[0,1,1::2,1::2] = M[0,1,1::2,1::2]
     
-    out= out.cpu().detach().numpy()
-    outG= outG.cpu().detach().numpy()
+    print ('Before sync')
     
+    out= out.cpu().detach().numpy()
+    
+    print ('Finished sync1')
+    
+    outG= outG.cpu().detach().numpy()
+   
+    print ('Finished sync2')
+        
     tot_time_ref = time.time()-start
     tot_time_ref *= 1000
     print("Time  {:.0f} ms".format(tot_time_ref))
