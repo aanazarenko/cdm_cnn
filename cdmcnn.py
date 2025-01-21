@@ -262,15 +262,15 @@ def main(args):
     M = np.array(M)[:1,:,:,:]
     M_backup = M.copy()
 
-    with th.profiler.profile(
-        activities=[th.profiler.ProfilerActivity.CPU, th.profiler.ProfilerActivity.CUDA],
-        on_trace_ready=th.profiler.tensorboard_trace_handler('./log')
-    ) as prof:
+    # with th.profiler.profile(
+    #     activities=[th.profiler.ProfilerActivity.CPU, th.profiler.ProfilerActivity.CUDA],
+    #     on_trace_ready=th.profiler.tensorboard_trace_handler('./log')
+    # ) as prof:
 
-        with th.no_grad():
-            R, runtime = demosaick(model_ref, M)
+    with th.no_grad():
+        R, runtime = demosaick(model_ref, M)
         
-    print(prof.key_averages().table(sort_by="cuda_time_total"))    
+    # print(prof.key_averages().table(sort_by="cuda_time_total"))    
         
     R = R.squeeze().transpose(1, 2, 0)
     R = R.clip(0,1)
