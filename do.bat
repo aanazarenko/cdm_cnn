@@ -15,10 +15,20 @@ for %%F in ("%input_file%") do (
     set "file_ext=%%~xF"
 )
 
+dcraw -v -D -4 -T "%input_file%"
+
+set "exiftool_path=exiftool"
+
+"%exiftool_path%" -d %%Y%%m%%d_%%H%%M -DateTimeOriginal -S -s "%input_file%" > 1.tmp
+
+for /f %%i in (1.tmp) do set photo_date=%%i
+
+echo "%photo_date%"
+
 :: Generate the output file path
-set "output_file=%file_dir%%file_name%__cdmcnn(lin)%file_ext%"
+set "output_file=%file_dir%%photo_date%_%file_name%__dcraw(-D_-4_-T)__cdmcnn(lin).tiff"
 
 :: Run the Python script with the input and output file paths
-python cdmcnn.py --linear_input --offset_x=1 --offset_y=0 --input "%input_file%" --output "%output_file%"
+python cdmcnn.py --linear_input --offset_x=1 --offset_y=0 --input "%file_dir%%file_name%.tiff" --output "%output_file%"
 
-"exiftool(-k).exe" -tagsfromfile "%input_file%" -overwrite_original "%output_file%"
+"%exiftool_path%" -tagsfromfile "%input_file%" -overwrite_original "%output_file%"
