@@ -16,9 +16,9 @@ for %%F in ("%input_file%") do (
 )
 
 :: Generate the output file path
-set "output_file=%file_dir%%file_name%_cdmcnn%file_ext%"
+set "output_file=%file_dir%%file_name%__cdmcnn(lin)%file_ext%"
 
 :: Run the Python script with the input and output file paths
-python cdmcnn.py --offset_x=1 --offset_y=1 --input "%input_file%" --output "%output_file%"
+python cdmcnn.py --linear_input --offset_x=1 --offset_y=0 --input "%input_file%" --output "%output_file%"
 
 "exiftool(-k).exe" -tagsfromfile "%input_file%" -overwrite_original "%output_file%"
