@@ -15,7 +15,7 @@ for %%F in ("%input_file%") do (
     set "file_ext=%%~xF"
 )
 
-set "dcraw_exe=dcraw -v -w -S 1647 -W -q 3 -o 5 -6 -g 2.2 0 -T"
+set "dcraw_exe=dcraw -v -T -d -W -6"
 
 %dcraw_exe%  "%input_file%"
 
@@ -31,10 +31,12 @@ for /f %%i in (1.tmp) do set photo_date=%%i
 
 echo "%photo_date%"
 
+set "cdmcnn_py=python cdmcnn.py --linear_input --offset_x=1 --offset_y=0"
+
 :: Generate the output file path
-set "output_file=%file_dir%%photo_date%_%file_name%__%dcraw_exe_X%__cdmcnn(lin).tiff"
+set "output_file=%file_dir%%photo_date%_%file_name%__'%dcraw_exe_X%'__'%cdmcnn_py%'.tiff"
 
 :: Run the Python script with the input and output file paths
-python cdmcnn.py --offset_x=0 --offset_y=1 --input "%file_dir%%file_name%.tiff" --output "%output_file%"
+%cdmcnn_py% --input "%file_dir%%file_name%.tiff" --output "%output_file%"
 
 "%exiftool_path%" -tagsfromfile "%input_file%" -overwrite_original "%output_file%"
