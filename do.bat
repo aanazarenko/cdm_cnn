@@ -8,6 +8,12 @@ if "%~1"=="" (
 :: Get the full file path from the first argument
 set "input_file=%~1"
 
+set "saturation=%2"
+
+set "offset_x=%~3"
+set "offset_y=%~4"
+
+
 :: Extract the file directory, name, and extension
 for %%F in ("%input_file%") do (
     set "file_dir=%%~dpF"
@@ -15,7 +21,7 @@ for %%F in ("%input_file%") do (
     set "file_ext=%%~xF"
 )
 
-set "dcraw_exe=dcraw -v -T -d -W -6"
+set "dcraw_exe=dcraw -v -T -d -W -6 -S %saturation%"
 
 %dcraw_exe%  "%input_file%"
 
@@ -31,7 +37,7 @@ for /f %%i in (1.tmp) do set photo_date=%%i
 
 echo "%photo_date%"
 
-set "cdmcnn_py=python cdmcnn.py --linear_input --offset_x=1 --offset_y=0"
+set "cdmcnn_py=python cdmcnn.py --linear_input --offset_x=%offset_x% --offset_y=%offset_y%"
 
 :: Generate the output file path
 set "output_file=%file_dir%%photo_date%_%file_name%__'%dcraw_exe_X%'__'%cdmcnn_py%'.tiff"
