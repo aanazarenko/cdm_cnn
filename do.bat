@@ -8,10 +8,10 @@ if "%~1"=="" (
 :: Get the full file path from the first argument
 set "input_file=%~1"
 
-set "saturation=%2"
+rem set "saturation=%2"
 
-set "offset_x=%~3"
-set "offset_y=%~4"
+set "offset_x=%~2"
+set "offset_y=%~3"
 
 
 :: Extract the file directory, name, and extension
@@ -21,7 +21,7 @@ for %%F in ("%input_file%") do (
     set "file_ext=%%~xF"
 )
 
-set "dcraw_exe=dcraw -v -T -d -W -6 -S %saturation%"
+set "dcraw_exe=dcraw -v -T -d -4
 
 %dcraw_exe%  "%input_file%"
 
