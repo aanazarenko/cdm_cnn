@@ -191,15 +191,17 @@ def demosaick_load_model(network_path=None):
 def main(args):
     # Load the network for the specific application
     model_ref = demosaick_load_model(args.net_path) 
-    
-    device = th.device("cpu")
-
+   
     if args.gpu:
 
         if th.backends.mps.is_available():
             device = th.device("mps")
+            
         elif th.cuda.is_available():
             device = th.device("cuda")
+
+    if device is None:
+        device = th.device("cpu")
 
     print(f"Using {device} backend for acceleration.")
     
