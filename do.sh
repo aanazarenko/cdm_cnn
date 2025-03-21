@@ -1,8 +1,26 @@
 #!/usr/bin/env bash
 
 # Check if the user provided a file path as an argument
-if [ -z "$1" ]; then
-    echo "Usage: do.sh file_path"
+if [ $# -ne 3 ]; then
+    echo "Usage: do.sh file_path offset_x offset_y"
+    exit 1
+fi
+
+# Check if the first argument is an existing file
+if [ ! -f "$1" ]; then
+    echo "Error: '$1' is not a valid file."
+    exit 2
+fi
+
+# Check if the second argument is a number
+if ! [[ "$2" =~ ^-?[0-9]+$ ]]; then
+    echo "Error: offset_x ('$2') is not a valid number."
+    exit 1
+fi
+
+# Check if the third argument is a number
+if ! [[ "$3" =~ ^-?[0-9]+$ ]]; then
+    echo "Error: offset_y ('$3') is not a valid number."
     exit 1
 fi
 
