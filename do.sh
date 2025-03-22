@@ -43,7 +43,7 @@ $dcraw_exe "$input_file"
 exiftool_path="exiftool"
 photo_date=$("$exiftool_path" -d "%Y%m%d_%H%M" -DateTimeOriginal -S -s "$input_file" | tr -d '\r'); echo "$photo_date"
 
-cdmcnn_py="python cdmcnn.py --linear_input --offset_x=$offset_x --offset_y=$offset_y"
+cdmcnn_py="python3.11 cdmcnn.py --gpu --linear_input --offset_x=$offset_x --offset_y=$offset_y"
 
 # Generate the output file path
 output_file="${file_dir}${photo_date}_${file_name}__'${dcraw_exe//' '/'_'}'__'${cdmcnn_py//' '/'_'}'.tiff"; echo "$output_file"
