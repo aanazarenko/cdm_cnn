@@ -359,13 +359,8 @@ if __name__ == "__main__":
 
     start = time.time()
 
-    import gc
-    gc.collect()  
-
     main(args)
 
     tot_time_ref = time.time()-start
     tot_time_ref *= 1000
     print("Time  {:.0f} ms".format(tot_time_ref))
-
-    gc.collect() 
