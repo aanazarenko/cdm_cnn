@@ -161,16 +161,14 @@ def demosaick(net, M):
     out[0,0,0::2,1::2] = M[0,0,0::2,1::2]
     out[0,2,1::2,0::2] = M[0,2,1::2,0::2]
     out[0,1,1::2,1::2] = M[0,1,1::2,1::2]
-    
+
     print ('Before sync')
+
+    out = out.detach().to("cpu", non_blocking=True).numpy()
     
-    out= out.detach().to("cpu", non_blocking=True).numpy()
-    
-    print ('Finished sync1')
-    
-    outG= outG.detach().to("cpu", non_blocking=True).numpy()
+#    outG= outG.detach().to("cpu", non_blocking=True).numpy()
    
-    print ('Finished sync2')
+    print ('Finished sync')
         
     tot_time_ref = time.time()-start
     tot_time_ref *= 1000
@@ -206,9 +204,6 @@ def main(args):
         device = th.device("cpu")
 
     print(f"Using {device} backend for acceleration.")
-
-    import sys
-    sys.exit()
 
     model_ref.to(device, non_blocking=True)
     model_ref.eval()
@@ -274,17 +269,24 @@ def main(args):
     #     on_trace_ready=th.profiler.tensorboard_trace_handler('./log')
     # ) as prof:
 
+    print( 'Start demosaick' )
+
     with th.no_grad():
         R, runtime = demosaick(model_ref, M)
-        
+
+    print ( 'Finished demosaick' )
+
     # print(prof.key_averages().table(sort_by="cuda_time_total"))    
         
     R = R.squeeze().transpose(1, 2, 0)
     R = R.clip(0,1)
     M = M_backup.transpose((2,3,1,0)).squeeze()
     
+    print ( 'Prepared R and M' )
+
     # Remove the padding
     if crop > 0:
+        print( 'Cropping' )
         R = R[c:-c, c:-c, :]
         I = I[c:-c, c:-c, :]
         M = M[c:-c, c:-c, :]
@@ -325,8 +327,11 @@ def main(args):
         print ('  PSNR = {:.1f} dB, time = {} ms'.format(p, int(runtime)))
     else:
         print ('  - raw image without groundtruth, bypassing metric')
+
     out = _float2uint(R, dtype)
-    print(dtype)
+    
+    print( 'out' )
+
     #out_mosaicked = _float2uint(M, dtype)
     
     # Write output image
