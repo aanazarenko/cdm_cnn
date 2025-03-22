@@ -199,7 +199,7 @@ def CDMCNN_pretrained(savefile=None, verbose=False):
             loadmap = {'cuda:0': 'mps'}
         else:
             loadmap = {'cuda:0': 'cpu'}
-        m = torch.load(cached_model_fname, map_location=loadmap)
+        m = torch.load(cached_model_fname, map_location=loadmap, weights_only=False)
         print('downloading pretrained model - using cached model: %s'%cached_model_fname)
         return m
     except OSError:
