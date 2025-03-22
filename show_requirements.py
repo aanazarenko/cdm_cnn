@@ -1,0 +1,6 @@
+import         sys; print( sys.version )
+import       torch; print( "     PyTorch version:",       torch.__version__ )
+import       numpy; print( "       NumPy version:",       numpy.__version__ )
+import        tqdm; print( "        tqdm version:",        tqdm.__version__ )
+import     skimage; print( "scikit-image version:",     skimage.__version__ )
+import hdf5storage; print( " hdf5storage version:", hdf5storage.__version__ )
