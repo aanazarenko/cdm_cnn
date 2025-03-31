@@ -37,7 +37,7 @@ for /f %%i in (1.tmp) do set photo_date=%%i
 
 echo "%photo_date%"
 
-set "cdmcnn_py=python cdmcnn.py --linear_input --offset_x=%offset_x% --offset_y=%offset_y%"
+set "cdmcnn_py=python cdmcnn.py --gpu --linear_input --offset_x=%offset_x% --offset_y=%offset_y%"
 
 :: Generate the output file path
 set "output_file=%file_dir%%photo_date%_%file_name%__'%dcraw_exe_X%'__'%cdmcnn_py%'.tiff"

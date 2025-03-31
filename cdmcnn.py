@@ -145,6 +145,9 @@ def demosaick(net, M):
     dev=next(net.parameters()).device
     
     print (dev)
+    if th.cuda.is_available():
+        print("GPU:", th.cuda.get_device_name(0))    
+    
 
     M = th.from_numpy(M).to(device=dev, dtype=th.float)
 
